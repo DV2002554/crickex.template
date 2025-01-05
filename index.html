@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DV TESTING</title>
+  <style>
+    /* Background and general styling */
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(to right, #FF7E5F, #feb47b); /* Gradient background */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    /* Container for the form */
+    .form-container {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #333;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-size: 16px;
+      color: #333;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"], select, input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0 20px;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #FF7E5F;
+      color: white;
+      font-size: 16px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #feb47b;
+    }
+
+    /* Add responsive design */
+    @media (max-width: 600px) {
+      .form-container {
+        padding: 20px;
+        width: 90%;
+      }
+
+      h2 {
+        font-size: 20px;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    <h2>DV TESTING</h2>
+    <form id="submissionForm">
+      <label for="channel">Channel:</label>
+      <select id="channel" name="channel" required>
+        <option value="Cashthru">Cashthru</option>
+        <option value="JustPay">JustPay</option>
+        <option value="AutoPay">AutoPay</option>
+        <option value="SendMoney">SendMoney</option>
+      </select><br><br>
+
+      <label for="reference">Reference:</label>
+      <input type="text" id="reference" name="reference" required><br><br>
+      
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required><br><br>
+      
+      <label for="image">Upload Image:</label>
+      <input type="file" id="image" name="image" accept="image/*" required><br><br>
+      
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+
+  <script>
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbwvlpO-9FUjH0A835T4lKEoUYpVweyvjeVKUJGRnhBwmrSX0bsBYYEvFl5zeLTAcDvFIQ/exec"; // Your Web App URL
+
+    // Function to handle the form submission
+    function submitForm(event) {
+      event.preventDefault();  // Prevent the default form submission
+
+      const form = document.getElementById('submissionForm');
+      const fileInput = document.getElementById('image');
+      
+      const formData = new FormData(form);
+      const imageFile = fileInput.files[0];
+      const reader = new FileReader();
+      
+      reader.onloadend = function() {
+        formData.append('image', reader.result.split(',')[1]);  // Remove base64 prefix
+
+        fetch(webAppUrl, {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          alert(data.message);  // Show the success or failure message
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Submission failed!');
+        });
+      };
+
+      reader.readAsDataURL(imageFile);  // Convert image to base64 before sending
+    }
+
+    // Add event listener for form submission
+    document.getElementById('submissionForm').addEventListener('submit', submitForm);
+  </script>
+
+</body>
+</html>
